@@ -1,3 +1,4 @@
+#https://irnandaseptiana.github.io/uuid-generator/
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,15 +30,23 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
+
     button {
-      background-color: #3498db;
+      background-color: #ff5fa2;
       color: #fff;
       border: none;
       cursor: pointer;
+      font-weight: bold;
     }
     button:hover {
-      background-color: #2980b9;
+      background-color: #e94b8c;
     }
+
+    button:disabled {
+      background-color: #f3a7c6;
+      cursor: not-allowed;
+    }
+
     ul {
       margin-top: 20px;
       padding-left: 20px;
@@ -57,40 +66,53 @@
       <option value="20">20</option>
     </select>
 
-    <button onclick="generateUUIDs()">Generate & Download CSV</button>
+    <button onclick="generateUUIDs()">Generate UUID</button>
+    <button id="downloadBtn" onclick="downloadCSV()" disabled>
+      Download CSV
+    </button>
 
     <ul id="result"></ul>
   </div>
 
   <script>
+    let generatedUUIDs = [];
+
     function generateUUIDs() {
       const count = parseInt(document.getElementById("count").value);
-      const uuids = [];
+      generatedUUIDs = [];
 
       for (let i = 0; i < count; i++) {
-        uuids.push(crypto.randomUUID());
+        generatedUUIDs.push(crypto.randomUUID());
       }
 
-      // tampilkan di UI
+      // tampilkan ke UI
       const list = document.getElementById("result");
       list.innerHTML = "";
-      uuids.forEach(uuid => {
+      generatedUUIDs.forEach(uuid => {
         const li = document.createElement("li");
         li.textContent = uuid;
         list.appendChild(li);
       });
 
-      // buat CSV
+      // aktifkan tombol download
+      document.getElementById("downloadBtn").disabled = false;
+    }
+
+    function downloadCSV() {
+      if (generatedUUIDs.length === 0) {
+        alert("Generate UUID terlebih dahulu");
+        return;
+      }
+
       let csvContent = "UUID\n";
-      uuids.forEach(uuid => {
+      generatedUUIDs.forEach(uuid => {
         csvContent += uuid + "\n";
       });
 
-      // download
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `uuid_${count}.csv`;
+      link.download = `uuid_${generatedUUIDs.length}.csv`;
       link.click();
     }
   </script>
